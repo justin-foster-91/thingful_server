@@ -22,7 +22,7 @@ describe('Things Endpoints', function () {
 
   afterEach('cleanup', () => helpers.cleanTables(db));
 
-  describe.only(`Protected endpoints`, () => {
+  describe(`Protected endpoints`, () => {
     beforeEach('insert thingss', () =>
       helpers.seedThingsTables(db, testUsers, testThings, testReviews)
     );
@@ -117,7 +117,7 @@ describe('Things Endpoints', function () {
         const thingId = 123456;
         return supertest(app)
           .get(`/api/things/${thingId}`)
-          .set('Authorization', makeAuthHeader(testUsers[0]))
+          .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(404, { error: `Thing doesn't exist` });
       });
     });
@@ -137,7 +137,7 @@ describe('Things Endpoints', function () {
 
         return supertest(app)
           .get(`/api/things/${thingId}`)
-          .set('Authorization', makeAuthHeader(testUsers[0]))
+          .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200, expectedThing);
       });
     });
@@ -155,7 +155,7 @@ describe('Things Endpoints', function () {
       it('removes XSS attack content', () => {
         return supertest(app)
           .get(`/api/things/${maliciousThing.id}`)
-          .set('Authorization', makeAuthHeader(testUser))
+          .set('Authorization', helpers.makeAuthHeader(testUser))
           .expect(200)
           .expect((res) => {
             expect(res.body.title).to.eql(expectedThing.title);
@@ -172,7 +172,7 @@ describe('Things Endpoints', function () {
         const thingId = 123456;
         return supertest(app)
           .get(`/api/things/${thingId}/reviews`)
-          .set('Authorization', makeAuthHeader(testUsers[0]))
+          .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(404, { error: `Thing doesn't exist` });
       });
     });
@@ -192,7 +192,7 @@ describe('Things Endpoints', function () {
 
         return supertest(app)
           .get(`/api/things/${thingId}/reviews`)
-          .set('Authorization', makeAuthHeader(testUsers[0]))
+          .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200, expectedReviews);
       });
     });
