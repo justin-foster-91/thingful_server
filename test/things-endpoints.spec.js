@@ -8,13 +8,6 @@ describe('Things Endpoints', function () {
 
   const { testUsers, testThings, testReviews } = helpers.makeThingsFixtures();
 
-  function makeAuthHeader(user) {
-    const token = Buffer.from(`${user.user_name}:${user.password}`).toString(
-      'base64'
-    );
-    return `Basic ${token}`;
-  }
-
   before('make knex instance', () => {
     db = knex({
       client: 'pg',
@@ -57,14 +50,17 @@ describe('Things Endpoints', function () {
 
           return supertest(app)
             .get(endpoint.path)
-            .set('Authorization', makeAuthHeader(validUser, invalidSecret))
+            .set(
+              'Authorization',
+              helpers.makeAuthHeader(validUser, invalidSecret)
+            )
             .expect(401, { error: `Unauthorized request` });
         });
         it(`responds 401 'Unauthorized request' when invalid sub in payload`, () => {
           const invalidUser = { user_name: 'user-not-existy', id: 1 };
           return supertest(app)
             .get(endpoint.path)
-            .set('Authorization', makeAuthHeader(invalidUser))
+            .set('Authorization', helpers.makeAuthHeader(invalidUser))
             .expect(401, { error: `Unauthorized request` });
         });
       });
